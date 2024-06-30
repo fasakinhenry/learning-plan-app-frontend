@@ -1,9 +1,10 @@
+// src/components/Plan.jsx
 import React from 'react';
 
 function Plan({ plan }) {
   return (
     <div>
-      <h2>Day {plan.day}</h2>
+      <h2 className='text-xl font-semibold'>Day {plan.day}</h2>
       <p>{plan.task}</p>
     </div>
   );

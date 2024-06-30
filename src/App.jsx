@@ -6,11 +6,11 @@ import './App.css';
 function App() {
   const [day, setDay] = useState(1);
   const [plan, setPlan] = useState(null);
-  const [email, setEmail] = useState(''); // Input for user email
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     axios
-      .get(`/api/plan/${day}`)
+      .get(`${import.meta.env.VITE_API_URL}/api/plan/${day}`)
       .then((res) => setPlan(res.data))
       .catch((err) => console.error(err));
   }, [day]);
@@ -21,26 +21,37 @@ function App() {
       return;
     }
 
-    const message = `Today's plan: ${plan.task}`;
-
     axios
-      .post('/api/notify', { email, message })
+      .post(`${import.meta.env.VITE_API_URL}/api/notify`, { email, day })
       .then(() => alert('Notification sent!'))
       .catch((err) => console.error(err));
   };
 
   return (
-    <div className='App'>
-      <h1>Daily Learning Plan</h1>
+    <div className='container mx-auto p-4'>
+      <h1 className='text-2xl font-bold mb-4'>Daily Learning Plan</h1>
       {plan && <Plan plan={plan} />}
-      <button onClick={() => setDay(day + 1)}>Next Day</button>
-      <input
-        type='email'
-        placeholder='Enter your email'
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <button onClick={handleNotify}>Send Notification</button>
+      <div className='mt-4'>
+        <button
+          className='bg-blue-500 text-white px-4 py-2 rounded mr-2'
+          onClick={() => setDay(day + 1)}
+        >
+          Next Day
+        </button>
+        <input
+          type='email'
+          className='border px-4 py-2 rounded mr-2'
+          placeholder='Enter your email'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <button
+          className='bg-green-500 text-white px-4 py-2 rounded'
+          onClick={handleNotify}
+        >
+          Send Notification
+        </button>
+      </div>
     </div>
   );
 }

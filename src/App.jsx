@@ -10,10 +10,12 @@ function App() {
   const [startDate, setStartDate] = useState('');
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/plan/${day}`)
-      .then((res) => setPlan(res.data))
-      .catch((err) => console.error(err));
+    if (day > 0) {
+      axios
+        .get(`${import.meta.env.VITE_API_URL}/api/plan/${day}`)
+        .then((res) => setPlan(res.data))
+        .catch((err) => console.error(err));
+    }
   }, [day]);
 
   const handleNotify = () => {
@@ -36,12 +38,6 @@ function App() {
       <h1 className='text-2xl font-bold mb-4'>Daily Learning Plan</h1>
       {plan && <Plan plan={plan} />}
       <div className='mt-4'>
-        <button
-          className='bg-blue-500 text-white px-4 py-2 rounded mr-2'
-          onClick={() => setDay(day + 1)}
-        >
-          Next Day
-        </button>
         <input
           type='email'
           className='border px-4 py-2 rounded mr-2'

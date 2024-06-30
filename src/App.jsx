@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Plan from './components/Plan';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [day, setDay] = useState(1);
+  const [plan, setPlan] = useState(null);
+  const [email, setEmail] = useState(''); // Input for user email
+
+  useEffect(() => {
+    axios
+      .get(`/api/plan/${day}`)
+      .then((res) => setPlan(res.data))
+      .catch((err) => console.error(err));
+  }, [day]);
+
+  const handleNotify = () => {
+    if (!email) {
+      alert('Please enter your email.');
+      return;
+    }
+
+    const message = `Today's plan: ${plan.task}`;
+
+    axios
+      .post('/api/notify', { email, message })
+      .then(() => alert('Notification sent!'))
+      .catch((err) => console.error(err));
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className='App'>
+      <h1>Daily Learning Plan</h1>
+      {plan && <Plan plan={plan} />}
+      <button onClick={() => setDay(day + 1)}>Next Day</button>
+      <input
+        type='email'
+        placeholder='Enter your email'
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <button onClick={handleNotify}>Send Notification</button>
+    </div>
+  );
 }
 
-export default App
+export default App;
